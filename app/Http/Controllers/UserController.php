@@ -2,16 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UsersImport;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
     public function index()
+    {
+        $users = User::latest()->get(); // ambil data user paling baru dulu
+        return view('users.index', compact('users'));
+    }
+
+    public function show(User $user)
+    {
+        return view('users.show', compact('user'));
+    }
+
+    public function exportPDF()
+    {
+        $users = User::latest()->get();
+        $pdf = Pdf::loadView('users.pdf', compact('users'));
+        return $pdf->download('data_users.pdf');
+    }
+
+    public function import(Request $request)
 {
-    $users = User::latest()->get(); // ambil data user paling baru dulu
-    return view('users.index', compact('users'));
+    $file = $request->file('file'); // Nama input file Excel
+
+    // Validasi jika email duplikat dalam file
+    $data = Excel::toArray(new UsersImport, $file);
+    $emails = array_column($data[0], 'email'); // Ambil kolom email
+
+    // Cek duplikasi
+    $duplicates = array_diff_assoc($emails, array_unique($emails));
+
+    if (count($duplicates) > 0) {
+        return back()->withErrors(['error' => 'Terdapat email yang duplikat']);
+    }
+
+    // Lanjutkan import jika tidak ada duplikasi
+    Excel::import(new UsersImport, $file);
+    return back()->with('success', 'Data berhasil diimpor!');
 }
 
 
