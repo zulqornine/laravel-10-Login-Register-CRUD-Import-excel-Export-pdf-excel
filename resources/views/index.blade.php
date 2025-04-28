@@ -1,6 +1,18 @@
 @extends('layouts.main')
 
 @section('content')
+            @if (session('success'))
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil Login!',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+            @endif
+
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">

@@ -26,6 +26,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+
+
 </head>
 
 <body id="page-top">
@@ -47,11 +49,12 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <!-- Dashboard -->
+            <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('home') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+                    <span>Dashboard</span>
+                </a>
             </li>
 
             <!-- Divider -->
@@ -63,12 +66,58 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
+            <!-- Users -->
+            @auth
+            @if (Auth::user()->level === 'superadmin')
+            <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('users.index') }}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span>
                 </a>
             </li>
+            @endif
+            @endauth
+
+            <!-- Divider -->
+            <li class="nav-item {{ request()->routeIs('barangs.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('barangs.index') }}">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>Barang</span>
+                </a>
+            </li>
+
+            <!-- Menu Kategori -->
+            <li class="nav-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
+                    <i class="fas fa-fw fa-cogs"></i>
+                    <span>Kategori</span>
+                </a>
+            </li>
+
+            <!-- Menu Pembelian -->
+            <li class="nav-item {{ request()->routeIs('orders.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('orders.index') }}">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    <span>Pembelian</span>
+                </a>
+
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <li class="nav-item">
+                <button type="button" id="btnLogout" class="nav-link btn btn-link">
+                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+
+                <form id="logoutForm" method="POST" action="{{ route('logout') }}" style="display: none;">
+                    @csrf
+                </form>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
 
             {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -147,8 +196,12 @@
                     <span>Tables</span></a>
             </li> --}}
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+
+
+
+            {{-- Logout --}}
+
+
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -465,6 +518,26 @@
                     });
                 });
             });
+        });
+    </script>
+    <script>
+        document.getElementById('btnLogout').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Yakin ingin logout?',
+                text: "Kamu akan keluar dari aplikasi.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, logout!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logoutForm').submit();
+                }
+            })
         });
     </script>
 

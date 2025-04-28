@@ -23,25 +23,28 @@
     </style>
 </head>
 <body>
-    <h1>Daftar Users</h1>
+    <h1>Daftar Barang</h1>
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama</th>
-                <th>Email</th>
+                <th>Nama Barang</th>
+                <th>Kategori</th>
+                <th>Harga</th>
+                <th>Stok</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                </tr>
-                @endforeach
+            @foreach ($barangs as $barang)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $barang->nama }}</td>
+                <td>{{ $barang->kategori }}</td>
+                <td>Rp{{ number_format($barang->harga, 0, ',', '.') }}</td>
+                <td>{{ $barang->stok }}</td>
+            </tr>
+            @endforeach
         </tbody>
     </table>
 </body>
 </html>
-
